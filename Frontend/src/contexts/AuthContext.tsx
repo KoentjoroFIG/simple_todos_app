@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import type { ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect } from "react";
+import type { ReactNode } from "react";
 
 interface User {
   username: string;
@@ -20,7 +20,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 };
@@ -36,7 +36,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   useEffect(() => {
     // Check for existing token in localStorage on app start
-    const storedToken = localStorage.getItem('token');
+    const storedToken = localStorage.getItem("token");
     if (storedToken) {
       setToken(storedToken);
       // Verify token with backend and get user info
@@ -48,10 +48,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const verifyToken = async (token: string) => {
     try {
-      const response = await fetch('http://localhost:8000/auth/me', {
+      const response = await fetch("http://localhost:8000/auth/me", {
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
         },
       });
 
@@ -60,12 +60,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setUser(userData);
       } else {
         // Token is invalid, remove it
-        localStorage.removeItem('token');
+        localStorage.removeItem("token");
         setToken(null);
       }
     } catch (error) {
-      console.error('Token verification failed:', error);
-      localStorage.removeItem('token');
+      console.error("Token verification failed:", error);
+      localStorage.removeItem("token");
       setToken(null);
     } finally {
       setLoading(false);
@@ -75,13 +75,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = (newToken: string, userData: User) => {
     setToken(newToken);
     setUser(userData);
-    localStorage.setItem('token', newToken);
+    localStorage.setItem("token", newToken);
   };
 
   const logout = () => {
     setToken(null);
     setUser(null);
-    localStorage.removeItem('token');
+    localStorage.removeItem("token");
   };
 
   const value: AuthContextType = {
@@ -93,9 +93,5 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     loading,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

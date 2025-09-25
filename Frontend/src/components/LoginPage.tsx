@@ -5,7 +5,7 @@ import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 
 const LoginPage: React.FC = () => {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -14,8 +14,8 @@ const LoginPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!username.trim() || !password.trim()) {
-      setError("Username and password are required");
+    if (!email.trim() || !password.trim()) {
+      setError("Email and password are required");
       return;
     }
     setError("");
@@ -26,7 +26,7 @@ const LoginPage: React.FC = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ email, password }),
       });
 
       if (!res.ok) {
@@ -46,12 +46,12 @@ const LoginPage: React.FC = () => {
 
       const data = await res.json();
       const token = data?.access_token;
-      
+
       if (token) {
         // Get user info after successful login
         const userRes = await fetch("http://localhost:8000/auth/me", {
           headers: {
-            "Authorization": `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
         });
@@ -82,15 +82,15 @@ const LoginPage: React.FC = () => {
       >
         <h2 className="text-xl font-semibold mb-4">Sign in</h2>
 
-        <label className="block mb-2 text-sm font-medium" htmlFor="username">
-          Username
+        <label className="block mb-2 text-sm font-medium" htmlFor="email">
+          Email
         </label>
         <Input
-          id="username"
-          type="text"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          placeholder="Enter your username"
+          id="email"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Enter your email"
           required
           disabled={loading}
         />

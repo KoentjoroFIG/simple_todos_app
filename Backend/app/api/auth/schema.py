@@ -8,7 +8,7 @@ class UserRegister(BaseModel):
     password: str
 
 class UserLogin(BaseModel):
-    username: str
+    email: EmailStr
     password: str
 
 class Token(BaseModel):
@@ -16,7 +16,7 @@ class Token(BaseModel):
     token_type: str
 
 class TokenData(BaseModel):
-    username: Optional[str] = None
+    email: Optional[str] = None
 
 class User(BaseModel):
     username: str

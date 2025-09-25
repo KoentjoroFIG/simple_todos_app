@@ -4,7 +4,11 @@ interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
   options: { value: string; label: string }[];
 }
 
-export const Select: React.FC<SelectProps> = ({ options, className = "", ...props }) => {
+export const Select: React.FC<SelectProps> = ({
+  options,
+  className = "",
+  ...props
+}) => {
   return (
     <select
       className={`

@@ -44,8 +44,8 @@ def verify_access_token(token: str) -> Optional[Dict[str, Any]]:
         return None  # Token is invalid
 
 def get_user_from_token(token: str) -> Optional[str]:
-    """Extract username from JWT token"""
+    """Extract email from JWT token"""
     payload = verify_access_token(token)
     if payload:
-        return payload.get("sub")  # "sub" is the standard claim for subject (username)
+        return payload.get("sub")  # "sub" is the standard claim for subject (email)
     return None

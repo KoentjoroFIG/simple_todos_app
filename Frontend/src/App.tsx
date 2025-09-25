@@ -1,8 +1,13 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider, useAuth } from './contexts/AuthContext';
-import LoginPage from './components/LoginPage';
-import TodoListPage from './components/TodoListPage';
-import ProtectedRoute from './components/ProtectedRoute';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import { AuthProvider, useAuth } from "@/contexts/AuthContext";
+import LoginPage from "@/components/LoginPage";
+import TodoListPage from "@/components/TodoListPage";
+import ProtectedRoute from "@/components/ProtectedRoute";
 
 function AppRoutes() {
   const { isAuthenticated, loading } = useAuth();
@@ -20,21 +25,25 @@ function AppRoutes() {
 
   return (
     <Routes>
-      <Route 
-        path="/login" 
-        element={isAuthenticated ? <Navigate to="/todos" replace /> : <LoginPage />} 
+      <Route
+        path="/login"
+        element={
+          isAuthenticated ? <Navigate to="/todos" replace /> : <LoginPage />
+        }
       />
-      <Route 
-        path="/todos" 
+      <Route
+        path="/todos"
         element={
           <ProtectedRoute>
             <TodoListPage />
           </ProtectedRoute>
-        } 
+        }
       />
-      <Route 
-        path="/" 
-        element={<Navigate to={isAuthenticated ? "/todos" : "/login"} replace />} 
+      <Route
+        path="/"
+        element={
+          <Navigate to={isAuthenticated ? "/todos" : "/login"} replace />
+        }
       />
     </Routes>
   );

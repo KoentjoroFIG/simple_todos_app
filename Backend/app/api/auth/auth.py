@@ -25,13 +25,20 @@ users_db: Dict[str, UserInDB] = {
     )
 }
 
-def get_user(username: str) -> Optional[UserInDB]:
-    """Get user from local dictionary storage"""
+def get_user_by_email(email: str) -> Optional[UserInDB]:
+    """Get user by email from local dictionary storage"""
+    for user in users_db.values():
+        if user.email == email:
+            return user
+    return None
+
+def get_user_by_username(username: str) -> Optional[UserInDB]:
+    """Get user by username from local dictionary storage"""
     return users_db.get(username)
 
-def authenticate_user(username: str, password: str) -> Optional[UserInDB]:
+def authenticate_user(email: str, password: str) -> Optional[UserInDB]:
     """Authenticate user credentials"""
-    user = get_user(username)
+    user = get_user_by_email(email)
     if not user:
         return None
     if not verify_password(password, user.hashed_password):
@@ -41,16 +48,16 @@ def authenticate_user(username: str, password: str) -> Optional[UserInDB]:
 async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)) -> User:
     """Get current user from JWT token"""
     token = credentials.credentials
-    username = get_user_from_token(token)
+    email = get_user_from_token(token)
     
-    if username is None:
+    if email is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Could not validate credentials",
             headers={"WWW-Authenticate": "Bearer"},
         )
     
-    user = get_user(username)
+    user = get_user_by_email(email)
     if user is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -63,20 +70,19 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
 @router.post("/register", response_model=User)
 async def register_user(user_data: UserRegister):
     """Register a new user"""
-    # Check if user already exists
-    if get_user(user_data.username):
+    # Check if user already exists by username
+    if get_user_by_username(user_data.username):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Username already registered"
         )
     
     # Check if email already exists
-    for existing_user in users_db.values():
-        if existing_user.email == user_data.email:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Email already registered"
-            )
+    if get_user_by_email(user_data.email):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Email already registered"
+        )
     
     # Hash password and create user
     hashed_password = hash_password(user_data.password)
@@ -94,17 +100,17 @@ async def register_user(user_data: UserRegister):
 @router.post("/login", response_model=Token)
 async def login_user(user_credentials: UserLogin):
     """Login user and return JWT token"""
-    user = authenticate_user(user_credentials.username, user_credentials.password)
+    user = authenticate_user(user_credentials.email, user_credentials.password)
     
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password",
+            detail="Incorrect email or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
     
-    # Create access token
-    access_token = create_access_token(data={"sub": user.username})
+    # Create access token using email as subject
+    access_token = create_access_token(data={"sub": user.email})
     
     return Token(access_token=access_token, token_type="bearer")
 

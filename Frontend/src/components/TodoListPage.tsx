@@ -30,7 +30,7 @@ const TodoListPage: React.FC = () => {
       setLoading(true);
       const response = await fetch("http://localhost:8000/todos", {
         headers: {
-          "Authorization": `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });
@@ -55,13 +55,13 @@ const TodoListPage: React.FC = () => {
 
   const addTodo = async (text: string) => {
     if (!text.trim()) return;
-    
+
     try {
       setSubmitLoading(true);
       const response = await fetch("http://localhost:8000/todos", {
         method: "POST",
         headers: {
-          "Authorization": `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ text: text.trim() }),
@@ -94,7 +94,7 @@ const TodoListPage: React.FC = () => {
       const response = await fetch(`http://localhost:8000/todos/${id}`, {
         method: "PUT",
         headers: {
-          "Authorization": `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ text: text.trim() }),
@@ -109,9 +109,7 @@ const TodoListPage: React.FC = () => {
       }
 
       const updatedTodo: Todo = await response.json();
-      setTodos(todos.map(todo => 
-        todo.id === id ? updatedTodo : todo
-      ));
+      setTodos(todos.map((todo) => (todo.id === id ? updatedTodo : todo)));
       setEditingTodo(null);
       setEditText("");
       setError("");
@@ -129,7 +127,7 @@ const TodoListPage: React.FC = () => {
       const response = await fetch(`http://localhost:8000/todos/${id}`, {
         method: "DELETE",
         headers: {
-          "Authorization": `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });
@@ -142,7 +140,7 @@ const TodoListPage: React.FC = () => {
         throw new Error(`Failed to delete todo: ${response.status}`);
       }
 
-      setTodos(todos.filter(todo => todo.id !== id));
+      setTodos(todos.filter((todo) => todo.id !== id));
       setError("");
     } catch (err: any) {
       setError(err.message || "Failed to delete todo");
@@ -202,7 +200,7 @@ const TodoListPage: React.FC = () => {
         <div className="max-w-4xl mx-auto px-4 py-4 flex justify-between items-center">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Todo List</h1>
-            <p className="text-sm text-gray-600">Welcome, {user?.username}</p>
+            <p className="text-sm text-gray-600">Welcome, {user?.email}</p>
           </div>
           <Button
             onClick={logout}
@@ -228,7 +226,10 @@ const TodoListPage: React.FC = () => {
               className="flex-1"
               disabled={submitLoading}
             />
-            <Button type="submit" disabled={submitLoading || !newTodoText.trim()}>
+            <Button
+              type="submit"
+              disabled={submitLoading || !newTodoText.trim()}
+            >
               {submitLoading ? "Adding..." : "Add Todo"}
             </Button>
           </form>
@@ -237,7 +238,10 @@ const TodoListPage: React.FC = () => {
         {/* Filter */}
         <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
           <div className="flex items-center gap-4">
-            <label htmlFor="filter" className="text-sm font-medium text-gray-700">
+            <label
+              htmlFor="filter"
+              className="text-sm font-medium text-gray-700"
+            >
               Filter:
             </label>
             <Select
@@ -247,7 +251,7 @@ const TodoListPage: React.FC = () => {
               options={[
                 { value: "all", label: "All todos" },
                 { value: "completed", label: "Completed" },
-                { value: "not-completed", label: "Not Completed" }
+                { value: "not-completed", label: "Not Completed" },
               ]}
               className="w-48"
             />
@@ -257,7 +261,8 @@ const TodoListPage: React.FC = () => {
           </div>
           {filter !== "all" && (
             <p className="text-sm text-amber-600 mt-2">
-              Note: Filter functionality will be available when backend supports todo completion status
+              Note: Filter functionality will be available when backend supports
+              todo completion status
             </p>
           )}
         </div>
@@ -288,7 +293,10 @@ const TodoListPage: React.FC = () => {
               {filteredTodos.map((todo) => (
                 <div key={todo.id} className="p-4 hover:bg-gray-50">
                   {editingTodo === todo.id ? (
-                    <form onSubmit={handleEditSubmit} className="flex gap-3 items-center">
+                    <form
+                      onSubmit={handleEditSubmit}
+                      className="flex gap-3 items-center"
+                    >
                       <Input
                         type="text"
                         value={editText}
